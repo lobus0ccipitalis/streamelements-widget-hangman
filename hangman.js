@@ -93,21 +93,22 @@ window.addEventListener('DOMContentLoaded', () => {
         if (!gameActive) return;
 
         const text = (data.event.data?.text || data.event.text || "").trim().toUpperCase();
-        if (!text.startsWith("!HANGMAN ")) return;
+
+        if (!text.startsWith("!HANGMAN")) return;
 
         const now = Date.now();
         if (now - lastCommandTime < commandCooldown) return;
         lastCommandTime = now;
 
-        const parts = text.split(/\s+/);
-        const letter = parts[1]?.substring(0,1);
-
-        if (!letter) {
+        if (text === "!HANGMAN") {
             sendBotMessage("Syntax: !hangman [Buchstabe]");
             return;
         }
 
-        if (!/^[A-Z]$/.test(letter)) return;
+        const match = text.match(/^!HANGMAN ([A-Z])$/);
+        if (!match) return;
+
+        const letter = match[1];
 
         if (guessedLetters.includes(letter)) {
             sendBotMessage(`Der Buchstabe "${letter}" wurde bereits geraten.`);
