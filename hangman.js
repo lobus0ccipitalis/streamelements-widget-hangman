@@ -101,16 +101,25 @@ window.addEventListener('DOMContentLoaded', () => {
 
         const parts = text.split(/\s+/);
         const letter = parts[1]?.substring(0,1);
-        if (!letter || !/^[A-Z]$/.test(letter)) return;
 
-        if (guessedLetters.includes(letter)) return;
+        if (!letter) {
+            sendBotMessage("Syntax: !hangman [Buchstabe]");
+            return;
+        }
+
+        if (!/^[A-Z]$/.test(letter)) return;
+
+        if (guessedLetters.includes(letter)) {
+            sendBotMessage(`Der Buchstabe "${letter}" wurde bereits geraten.`);
+            return;
+        }
 
         guessedLetters.push(letter);
 
         if (currentWord.includes(letter)) {
             renderWord();
             if (checkWin()) {
-                sendBotMessage(`Gewonnen! Das Wort war: ${currentWord}`);
+                sendBotMessage(`Gewonnen! Das gesuchte Wort war: ${currentWord}`);
                 gameActive = false;
                 if (fadeTimeout) clearTimeout(fadeTimeout);
                 fadeTimeout = setTimeout(() => {
@@ -121,7 +130,7 @@ window.addEventListener('DOMContentLoaded', () => {
             wrongGuesses++;
             renderGallows();
             if (wrongGuesses >= maxWrong) {
-                sendBotMessage(`Game Over! Das Wort war: ${currentWord}`);
+                sendBotMessage(`Verloren! Das gesuchte Wort war: ${currentWord}`);
                 gameActive = false;
                 if (fadeTimeout) clearTimeout(fadeTimeout);
                 fadeTimeout = setTimeout(() => {
