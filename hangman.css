@@ -1,1 +1,68 @@
 @import url('https://fonts.googleapis.com/css2?family=Annie+Use+Your+Telescope&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#hangman-container {
+    width: 331px;
+    height: 183px;
+    position: relative;
+    font-family: 'Annie Use Your Telescope', cursive;
+    overflow: hidden;
+}
+
+.gallows {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 331px;
+    height: 183px;
+}
+
+.gallows img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.word-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    gap: 2px;
+}
+
+.word-space {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 35px;
+    color: #404040;
+}
+
+.word-space img {
+    position: absolute;
+    width: 35px;
+    height: 35px;
+}
+
+.word-space, .gallows img {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.word-space.show, .gallows img.show {
+    opacity: 1;
+}
+
+.word-letter {
+    position: relative;
+    z-index: 2;
+    top: -2px;
+}
