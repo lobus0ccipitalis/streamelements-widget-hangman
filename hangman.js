@@ -5,8 +5,8 @@ let currentWord = "";
 let fadeTimeout = null;
 let guessedLetters = [];
 let wrongGuesses = 0;
-let gameActive = true;
 const maxWrong = 12;
+let gameActive = true;
 let lastCommandTime = 0;
 const commandCooldown = 2000;
 
@@ -71,12 +71,6 @@ window.addEventListener('DOMContentLoaded', () => {
         return currentWord.split("").every(l => guessedLetters.includes(l));
     }
 
-    function sendBotMessage(msg) {
-        if (window.SeElements) {
-            window.SeElements.call("sendMessage", msg);
-        }
-    }
-
     function endGameFade(callback) {
         wordContainer.querySelectorAll(".word-space").forEach(el => el.classList.remove("show"));
         gallowsContainer.classList.remove("show");
@@ -89,38 +83,29 @@ window.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('onEventReceived', function(obj) {
         const data = obj.detail;
         if (data.listener !== "message") return;
-
         if (!gameActive) return;
 
         const text = (data.event.data?.text || data.event.text || "").trim().toUpperCase();
-
         if (!text.startsWith("!HANGMAN")) return;
 
         const now = Date.now();
         if (now - lastCommandTime < commandCooldown) return;
         lastCommandTime = now;
 
-        if (text === "!HANGMAN") {
-            sendBotMessage("Syntax: !hangman [Buchstabe]");
-            return;
-        }
+        if (text === "!HANGMAN") return;
 
         const match = text.match(/^!HANGMAN ([A-Z])$/);
         if (!match) return;
 
         const letter = match[1];
 
-        if (guessedLetters.includes(letter)) {
-            sendBotMessage(`Der Buchstabe "${letter}" wurde bereits geraten.`);
-            return;
-        }
+        if (guessedLetters.includes(letter)) return;
 
         guessedLetters.push(letter);
 
         if (currentWord.includes(letter)) {
             renderWord();
             if (checkWin()) {
-                sendBotMessage(`Gewonnen! Das gesuchte Wort war: ${currentWord}`);
                 gameActive = false;
                 if (fadeTimeout) clearTimeout(fadeTimeout);
                 fadeTimeout = setTimeout(() => {
@@ -131,7 +116,6 @@ window.addEventListener('DOMContentLoaded', () => {
             wrongGuesses++;
             renderGallows();
             if (wrongGuesses >= maxWrong) {
-                sendBotMessage(`Verloren! Das gesuchte Wort war: ${currentWord}`);
                 gameActive = false;
                 if (fadeTimeout) clearTimeout(fadeTimeout);
                 fadeTimeout = setTimeout(() => {
